@@ -29,4 +29,6 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 画像データを保存
-np.save("imgdata" + "_" + "SelectTime", Select)  # ファイル名  # 保存したいオブジェクト
+np.save(
+    "resource/intermediate/imgdata" + "_" + "SelectTime", Select
+)  # ファイル名  # 保存したいオブジェクト

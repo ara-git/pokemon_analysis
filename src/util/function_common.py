@@ -17,7 +17,7 @@ def WindowCapture(window_name: str, bgr2rgb: bool = False):
 
     win32gui.EnumWindows(callback, None)
 
-    print(process_list)
+    # print(process_list)
 
     # ターゲットウィンドウ名を探す
     for process_name in process_list:
