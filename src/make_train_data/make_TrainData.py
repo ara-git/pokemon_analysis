@@ -3,7 +3,7 @@ import os
 from PIL.Image import Image
 import numpy as np
 import cv2
-import src.functions as functions
+import function_make_TrainData as functions
 from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
 from keras.preprocessing.image import (

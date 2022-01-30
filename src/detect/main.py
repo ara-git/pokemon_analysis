@@ -2,6 +2,8 @@
 
 import numpy as np
 from numpy.core.shape_base import stack
+
+# import detect.function_detect as func
 import function_detect as func
 from keras.preprocessing.image import (
     load_img,

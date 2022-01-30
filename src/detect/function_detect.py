@@ -5,9 +5,6 @@
 import cv2
 import datetime
 import time
-import win32gui
-import win32ui
-import win32con
 import numpy as np
 from keras.preprocessing.image import (
     load_img,
@@ -21,58 +18,13 @@ from keras.layers import Dense, Dropout, Flatten, Activation
 from keras.layers import Conv2D, MaxPool2D
 from keras.optimizers import Adam
 import streamlit as st
+import sys
+import os
 
-##アクティブなウィンドウを探して画像配列（numpy array)を返す様な関数を作る
-def WindowCapture(window_name: str, bgr2rgb: bool = False):
-    # 現在アクティブなウィンドウ名を探す
-    process_list = []
-
-    def callback(handle, _):
-        process_list.append(win32gui.GetWindowText(handle))
-
-    win32gui.EnumWindows(callback, None)
-
-    # print(process_list)
-
-    # ターゲットウィンドウ名を探す
-    for process_name in process_list:
-        if window_name in process_name:
-            hnd = win32gui.FindWindow(None, process_name)
-            # print("found") #見つかったら出力
-            break
-    else:
-        # 見つからなかったら画面全体を取得
-        # print("not found") #見つからなかったら出力
-        hnd = win32gui.GetDesktopWindow()
-
-    # ウィンドウサイズ取得
-    x0, y0, x1, y1 = win32gui.GetWindowRect(hnd)
-    width = x1 - x0
-    height = y1 - y0
-    # ウィンドウのデバイスコンテキスト取得
-    windc = win32gui.GetWindowDC(hnd)
-    srcdc = win32ui.CreateDCFromHandle(windc)
-    memdc = srcdc.CreateCompatibleDC()
-    # デバイスコンテキストからピクセル情報コピー, bmp化
-    bmp = win32ui.CreateBitmap()
-    bmp.CreateCompatibleBitmap(srcdc, width, height)
-    memdc.SelectObject(bmp)
-    memdc.BitBlt((0, 0), (width, height), srcdc, (0, 0), win32con.SRCCOPY)
-
-    # bmpの書き出し
-    if bgr2rgb is True:
-        img = np.frombuffer(bmp.GetBitmapBits(True), np.uint8).reshape(height, width, 4)
-        img = cv2.cvtColor(img, cv2.COLOR_bgr2rgb)
-    else:
-        img = np.fromstring(bmp.GetBitmapBits(True), np.uint8).reshape(height, width, 4)
-
-    # 後片付け
-    # srcdc.DeleteDC()
-    memdc.DeleteDC()
-    # win32gui.ReleaseDC(hnd, windc)
-    win32gui.DeleteObject(bmp.GetHandle())
-
-    return img
+# utilフォルダにあるfunction_commonファイルをインポートする
+# モジュール探索パスを追加して、絶対インポートする（参考：https://note.nkmk.me/python-relative-import/）
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+from util import function_common as func_com
 
 
 # 相手のポケモンの画像を抽出する関数を作る。
@@ -169,7 +121,7 @@ def main(model, name_onehot_relation, SelectTime, battle_limit=120, waiting_limi
     count = 0
     while True:
         # 画像をキャプチャする。
-        img = WindowCapture("PotPlayer")  # 部分一致
+        img = func_com.WindowCapture("PotPlayer")  # 部分一致
         if (img[0:80, 0:400] == SelectTime).all():
             print("Battle Start")
             # 画像を出力
