@@ -2,12 +2,7 @@
 # coding: utf-8
 
 import cv2
-import datetime
-import time
 from pathlib import Path
-import win32gui
-import win32ui
-import win32con
 import numpy as np
 import os
 from pywinauto.application import Application
@@ -19,12 +14,6 @@ from keras.preprocessing.image import (
     array_to_img,
     save_img,
 )
-import re
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Activation
-from keras.layers import Conv2D, MaxPool2D
-from keras.optimizers import Adam
 
 
 # ディレクトリの変更
@@ -32,44 +21,6 @@ os.chdir(r"C:\Users\ara-d\pokemon_analisis")
 
 # 参考：「[Python]マルチモニター環境でのウィンドウキャプチャ」
 # https://qiita.com/danupo/items/e196e0e07e704796cd42
-
-
-##############ここは一回だけでいい###################
-"""
-#"Select Time"だけ切り取る
-##やってみる
-Select = img[0:80,0:400]
-cv2.imshow("",Select)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-#############################
-
-##画像データを保存
-np.save(
-    "imgdata" + "_" + "SelectTime",  # ファイル名
-    Select # 保存したいオブジェクト
-)
-"""
-
-# 保存していた"SelectTime"データを解凍する。
-# SelectTime = np.load(file="imgdata_SelectTime.npy")
-
-"""
-cv2.imshow("",SelectTime)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-"""
-
-# 画像をとりあえずキャプチャする（全体）
-# img = WindowCapture("PotPlayer")
-
-"""
-cv2.imshow("", img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-"""
-
 
 # 二つの画像データの一致率を計算する関数を作る。
 def calc_accuracy(image1, image2):
@@ -107,58 +58,6 @@ def call_name_file(path, use_csv=True):
             Names.extend(new)
 
     return np.array(Names)
-
-
-# ファイルソートの手法を定める関数（下のcall_img_fileで用いる）
-def how_to_sort(val):
-    val = str(val)
-    val = re.search(r"\d+", val).group()
-    # print(val)
-    return int(val)
-
-
-# 保存していたポケモンの画像ファイルを呼び起こす
-##引数：ファイルがある場所、use_jpg:読み込むファイルがjpgか否か（defaultはTrue）
-##出力：画像のnumpy配列
-def call_img_file(path, use_jpg=True):
-    # ディレクトリを指定
-    dir_ = Path(path)
-
-    # jpgを読み込む
-    if use_jpg:
-        # ファイル名を持ってくる
-        poke_images_FileName = sorted(dir_.glob("*.jpg"), key=how_to_sort)
-        # poke_images_FileName = list(dir_.glob("*.jpg"))
-
-        Image_data = []
-
-        for i in range(len(poke_images_FileName)):
-            ##データを解凍する。
-            poke_image_train = cv2.imread(str(poke_images_FileName[i]))
-
-            Image_data.append(poke_image_train)
-
-        Image_data = np.array(Image_data)
-
-    # numpy arrayを読み込む
-    else:
-        # ファイル名を持ってくる
-        poke_images_FileName = sorted(dir_.glob("*.npy"))
-
-        Image_data = []
-
-        for i in range(len(poke_images_FileName)):
-            ##データを解凍する。
-            poke_image_train = np.load(file=str(poke_images_FileName[i]))
-
-            Image_data.append(poke_image_train)
-            # print("image:", poke_image_train)
-
-        Image_data = np.array(Image_data)
-        # 何故か色データの次元が4なので、3に直しておく
-        Image_data = Image_data[:, :, :, 0:3]
-
-    return Image_data
 
 
 # keras用にBGRをRGBに変換する

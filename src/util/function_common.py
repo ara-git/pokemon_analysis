@@ -23,7 +23,7 @@ def WindowCapture(window_name: str, bgr2rgb: bool = False):
     for process_name in process_list:
         if window_name in process_name:
             hnd = win32gui.FindWindow(None, process_name)
-            # print("found") #見つかったら出力
+            # print("found")  # 見つかったら出力
             break
     else:
         # 見つからなかったら画面全体を取得

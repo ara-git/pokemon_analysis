@@ -1,14 +1,6 @@
-from ast import Num
 import os
-from PIL.Image import Image
 import numpy as np
-import cv2
-from pathlib import Path
-from numpy.core.shape_base import stack
-import function_train as functions
-import datetime
-from keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.preprocessing import image
+import function_train as func_train
 from keras.preprocessing.image import (
     load_img,
     img_to_array,
@@ -16,43 +8,28 @@ from keras.preprocessing.image import (
     array_to_img,
     save_img,
 )
-from keras.utils import np_utils
-import pandas as pd
-from sklearn.model_selection import train_test_split
-import keras
 from keras.callbacks import EarlyStopping
 
-# ディレクトリの変更
-os.chdir(r"C:\Users\ara-d\pokemon_analisis")
-
-# 画像確認用：
-"""
-cv2.imshow("",SelectTime)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-"""
-
-####################################
-# 名前データの読み込み
-Names = np.load(file=r".\poke_names\one_hot_label.npy")
-# Names = functions.call_name_file(name_file_path, )
+# 重複あり名前データの読み込み
+# 間違えてファイルを消してしまったので、現在は存在しないファイルを参照している。
+Names = np.load(file="...resource/poke_names/one_hot_label.npy")
 # print("Names:", Names)
 
-# 画像データの読み込み
-Img_path = r"C:\Users\ara-d\pokemon_analisis\poke_figs"
-original_img = functions.call_img_file(Img_path, use_jpg=True)
-# original_img.shape
 
-Img_path = r"C:\Users\ara-d\pokemon_analisis\poke_figs\shifted"
-shifted_img = functions.call_img_file(Img_path, use_jpg=True)
+# 画像データの読み込み
+# オリジナルデータ
+Img_path = "...resource/poke_figs"
+original_img = func_train.call_img_file(Img_path, use_jpg=True)
+
+##shifted data
+Img_path = ".../resource/poke_figs/shifted"
+shifted_img = func_train.call_img_file(Img_path, use_jpg=True)
 shifted_img.shape
 
 Images = np.vstack([original_img, shifted_img])
 
 # 値のスケールを調整する
 scaled_Images = Images / 255
-# scaled_Images
-
 
 im_rows = Images.shape[1]  # 画像の縦サイズ（ピクセル）
 im_cols = Images.shape[2]  # 画像の横サイズ（ピクセル）
@@ -76,7 +53,7 @@ y_train = y
 # EaelyStoppingの設定
 early_stopping = EarlyStopping(monitor="val_loss", min_delta=0.0, patience=2,)
 
-model = functions.get_model(in_shape, num_classes)
+model = func_train.get_model(in_shape, num_classes)
 
 # モデルの学習
 hist = model.fit(
@@ -84,7 +61,7 @@ hist = model.fit(
 )
 
 # 学習したモデル（重み）を保存
-model.save_weights("./weight.hdf5")
+model.save_weights("...resource/intermediate/weight.hdf5")
 
 """
 # 実験：

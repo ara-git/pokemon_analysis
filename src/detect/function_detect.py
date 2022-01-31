@@ -6,13 +6,6 @@ import cv2
 import datetime
 import time
 import numpy as np
-from keras.preprocessing.image import (
-    load_img,
-    img_to_array,
-    ImageDataGenerator,
-    array_to_img,
-    save_img,
-)
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Activation
 from keras.layers import Conv2D, MaxPool2D
@@ -55,7 +48,16 @@ def save_poke(Img_array):
 
     # 画像を保存する。
     for i in range(len(Img_array)):
-        cv2.imwrite("pokedata" + "_" + time_ + "_" + str(i) + ".jpg", Img_array[i])
+        # 学習データを追加するために、ポケモン画像を保存する
+        cv2.imwrite(
+            "resource/poke_figs_outstanding/pokedata"
+            + "_"
+            + time_
+            + "_"
+            + str(i)
+            + ".jpg",
+            Img_array[i],
+        )
 
         """
         np.save(
@@ -117,17 +119,71 @@ def get_model(in_shape, num_classes):
     return model
 
 
+def main(
+    model,
+    name_onehot_relation,
+    SelectTime,
+    FinishBattle,
+    battle_limit=120,
+    waiting_limit=900,
+):
+    st.title("Pokemon Battle Supporter")
+    flag_in_battle = False
+
+    while True:
+        # 画像をキャプチャする。
+        img = func_com.WindowCapture("全画面プロジェクター")  # 部分一致
+        # img = func_com.WindowCapture("PotPlayer")  # 部分一致
+        """
+        cv2.imshow("", img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        """
+        time.sleep(1)
+        if not flag_in_battle:
+            """
+            バトルしていない
+            """
+            if (img[0:80, 0:400] == SelectTime).all():
+                # 個別のポケモンの画像を抽出する。
+                poke = capture_opponent(img)
+
+                # ここの部分は判別用
+                for individual_image in poke:
+                    estimated_poke_name, prob = judge_poke(
+                        individual_image, model, name_onehot_relation
+                    )
+                    st.write(estimated_poke_name, "prob=", prob)
+
+                ##個別ポケモン画像データを保存する。
+                save_poke(poke)
+                time.sleep(30)
+
+                flag_in_battle = True
+        else:
+            """
+            バトル中
+            """
+
+            if (img[900:950, 700:1000] == FinishBattle).all():
+                st.write("Battle Finish")
+                flag_in_battle = False
+            # count = 0  # カウントをリフレッシュする。
+
+            # 対戦時間中(battle_limit中)は休憩
+            # st.write("Battle Time Remain:" + str(battle_limit - 30 * i))  # 30秒毎に警告
+
+
+"""
+
+
 def main(model, name_onehot_relation, SelectTime, battle_limit=120, waiting_limit=900):
     count = 0
     while True:
         # 画像をキャプチャする。
-        img = func_com.WindowCapture("PotPlayer")  # 部分一致
+        img = func_com.WindowCapture("全画面プロジェクター")  # 部分一致
         if (img[0:80, 0:400] == SelectTime).all():
             print("Battle Start")
-            # 画像を出力
-            # cv2.imshow("", img)
-            # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
 
             # 個別のポケモンの画像を抽出する。
             poke = capture_opponent(img)
@@ -137,7 +193,8 @@ def main(model, name_onehot_relation, SelectTime, battle_limit=120, waiting_limi
                 estimated_poke_name, prob = judge_poke(
                     individual_image, model, name_onehot_relation
                 )
-                print(estimated_poke_name, "prob=", prob)
+                # print(estimated_poke_name, "prob=", prob)
+                st.write(estimated_poke_name, "prob=", prob)
 
             ##個別ポケモン画像データを保存する。
             save_poke(poke)
@@ -147,12 +204,14 @@ def main(model, name_onehot_relation, SelectTime, battle_limit=120, waiting_limi
             # 対戦時間中(battle_limit中)は休憩
             for i in range(battle_limit // 30):
                 print("Battle Time Remain:" + str(battle_limit - 30 * i))  # 30秒毎に警告
+                st.write("Battle Time Remain:" + str(battle_limit - 30 * i))  # 30秒毎に警告
                 time.sleep(30)
             else:
-                print("Rest was finished. Count starts again.")
+                # print("Rest was finished. Count starts again.")
+                st.write("Rest was finished. Count starts again.")
 
         if count % 30 == 0:
-            print("Waiting Time Remain:" + str(waiting_limit - count))  # 30秒毎に警告
+            # print("Waiting Time Remain:" + str(waiting_limit - count))  # 30秒毎に警告
             st.write(str(waiting_limit - count))
         if count >= waiting_limit:  # 一定時間（待機時間がwaiting_limitを超えたらbreak、放置対策）
             break
@@ -160,3 +219,5 @@ def main(model, name_onehot_relation, SelectTime, battle_limit=120, waiting_limi
         # １秒経過させる。
         time.sleep(1)
         count += 1
+"""
+
