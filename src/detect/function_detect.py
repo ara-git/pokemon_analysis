@@ -13,6 +13,8 @@ from keras.optimizers import Adam
 import streamlit as st
 import sys
 import os
+import csv
+import pandas as pd
 
 # utilフォルダにあるfunction_commonファイルをインポートする
 # モジュール探索パスを追加して、絶対インポートする（参考：https://note.nkmk.me/python-relative-import/）
@@ -120,17 +122,12 @@ def get_model(in_shape, num_classes):
 
 
 def main(
-    model,
-    name_onehot_relation,
-    SelectTime,
-    FinishBattle,
-    battle_limit=120,
-    waiting_limit=900,
+    model, name_onehot_relation, SelectTime, FinishBattle,
 ):
-    st.title("Pokemon Battle Supporter")
     flag_in_battle = False
 
-    while True:
+    check = st.checkbox("Start to detect")
+    while check:
         # 画像をキャプチャする。
         img = func_com.WindowCapture("全画面プロジェクター")  # 部分一致
         # img = func_com.WindowCapture("PotPlayer")  # 部分一致
@@ -148,12 +145,20 @@ def main(
                 # 個別のポケモンの画像を抽出する。
                 poke = capture_opponent(img)
 
+                estimated_poke_names_list = []
                 # ここの部分は判別用
                 for individual_image in poke:
                     estimated_poke_name, prob = judge_poke(
                         individual_image, model, name_onehot_relation
                     )
                     st.write(estimated_poke_name, "prob=", prob)
+                    # 推定したポケモン名を格納する（dataframeにする用）
+                    estimated_poke_names_list.append(estimated_poke_name)
+
+                # csvファイルに追記する
+                with open("battle_result.csv", "a") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(estimated_poke_names_list)
 
                 ##個別ポケモン画像データを保存する。
                 save_poke(poke)
@@ -168,7 +173,10 @@ def main(
             if (img[900:950, 700:1000] == FinishBattle).all():
                 st.write("Battle Finish")
                 flag_in_battle = False
-            # count = 0  # カウントをリフレッシュする。
+
+                battle_result_df = pd.read_csv("battle_result.csv", encoding="shift_jis")
+                st.table(battle_result_df)
+                # count = 0  # カウントをリフレッシュする。
 
             # 対戦時間中(battle_limit中)は休憩
             # st.write("Battle Time Remain:" + str(battle_limit - 30 * i))  # 30秒毎に警告
