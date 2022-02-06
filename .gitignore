@@ -3,3 +3,4 @@ __pycache__/
 poke_figs_outstanding/
 test.py 
 test2.py
+*.jpg
