@@ -5,6 +5,4 @@ test.py
 test2.py
 *.jpg
 
-/battle_result/*.csv
-
-/battle_result.csv
+battle_result/battle_result*
