@@ -156,9 +156,11 @@ def main(
                     estimated_poke_names_list.append(estimated_poke_name)
 
                 # csvファイルに追記する
-                with open("battle_result.csv", "a") as f:
+                with open("resource/battle_result/battle_result.csv", "a") as f:
                     writer = csv.writer(f)
-                    writer.writerow(estimated_poke_names_list)
+                    writer.writerow(
+                        [datetime.datetime.today()] + estimated_poke_names_list
+                    )
 
                 ##個別ポケモン画像データを保存する。
                 save_poke(poke)
@@ -174,58 +176,11 @@ def main(
                 st.write("Battle Finish")
                 flag_in_battle = False
 
-                battle_result_df = pd.read_csv("battle_result.csv", encoding="shift_jis")
+                battle_result_df = pd.read_csv(
+                    "resource/battle_result/battle_result.csv", encoding="shift_jis"
+                )
                 st.table(battle_result_df)
                 # count = 0  # カウントをリフレッシュする。
 
             # 対戦時間中(battle_limit中)は休憩
             # st.write("Battle Time Remain:" + str(battle_limit - 30 * i))  # 30秒毎に警告
-
-
-"""
-
-
-def main(model, name_onehot_relation, SelectTime, battle_limit=120, waiting_limit=900):
-    count = 0
-    while True:
-        # 画像をキャプチャする。
-        img = func_com.WindowCapture("全画面プロジェクター")  # 部分一致
-        if (img[0:80, 0:400] == SelectTime).all():
-            print("Battle Start")
-
-            # 個別のポケモンの画像を抽出する。
-            poke = capture_opponent(img)
-
-            # ここの部分は判別用
-            for individual_image in poke:
-                estimated_poke_name, prob = judge_poke(
-                    individual_image, model, name_onehot_relation
-                )
-                # print(estimated_poke_name, "prob=", prob)
-                st.write(estimated_poke_name, "prob=", prob)
-
-            ##個別ポケモン画像データを保存する。
-            save_poke(poke)
-
-            count = 0  # カウントをリフレッシュする。
-
-            # 対戦時間中(battle_limit中)は休憩
-            for i in range(battle_limit // 30):
-                print("Battle Time Remain:" + str(battle_limit - 30 * i))  # 30秒毎に警告
-                st.write("Battle Time Remain:" + str(battle_limit - 30 * i))  # 30秒毎に警告
-                time.sleep(30)
-            else:
-                # print("Rest was finished. Count starts again.")
-                st.write("Rest was finished. Count starts again.")
-
-        if count % 30 == 0:
-            # print("Waiting Time Remain:" + str(waiting_limit - count))  # 30秒毎に警告
-            st.write(str(waiting_limit - count))
-        if count >= waiting_limit:  # 一定時間（待機時間がwaiting_limitを超えたらbreak、放置対策）
-            break
-
-        # １秒経過させる。
-        time.sleep(1)
-        count += 1
-"""
-
