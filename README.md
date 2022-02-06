@@ -52,3 +52,5 @@ python src\make_train_data\make_SelectTime_fig.py
 python src\make_train_data\make_FinishBattle_fig.py
 ```
 を打ち込もう。此方は猶予が数秒しかないので、降参などをしてタイミングを合わせるのが良い。
+
+## その他の機能

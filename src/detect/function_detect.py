@@ -9,7 +9,7 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Activation
 from keras.layers import Conv2D, MaxPool2D
-from keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam
 import streamlit as st
 import sys
 import os
