@@ -4,3 +4,5 @@ __pycache__/
 test.py 
 test2.py
 *.jpg
+
+resource/battle_result/*.csv
