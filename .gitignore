@@ -4,5 +4,3 @@ __pycache__/
 test.py 
 test2.py
 *.jpg
-
-battle_result/battle_result*
