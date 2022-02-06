@@ -1,6 +1,6 @@
 __pycache__/
 .vscode/
-poke_figs_outstanding/
+#poke_figs_outstanding/
 test.py 
 test2.py
 *.jpg
